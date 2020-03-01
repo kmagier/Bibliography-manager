@@ -1,0 +1,31 @@
+version: '3'
+services:
+    web:
+        container_name: main
+        build:
+            context: .
+            dockerfile: ./Docker/main/Dockerfile
+        ports: 
+             - 8080:80
+        volumes: 
+             - ./app:/app
+        env_file: 
+            - ./app/api.env
+    db:
+        image: postgres:latest
+        restart: always
+        container_name: postgresdb
+        volumes:
+            - postgresql-volume:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+        environment: 
+            POSTGRES_USER: 'karol'
+            POSTGRES_PASSWORD: '123456'
+            POSTGRES_DB: 'database'
+    redis:
+        container_name: redisdb
+        image: "redis:alpine"
+volumes:
+    postgresql-volume:
+        external: true
