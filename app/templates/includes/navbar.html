@@ -8,29 +8,30 @@
     <div class="collapse navbar-collapse" id="navmenu">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/">Home</a>
-            </li>
-            {% if not session.logged_in %}
-            <li class="nav-item">
-                <a class="nav-link" href="/register">Sign up</a>
-            </li>
-            {% endif %}
-            <li class="nav-item">
-                <a class="nav-link" href="/add-book">Add books</a>
+                <a class="nav-link" href="{{url_for('index.index')}}">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/book-list">List of books</a>
+                <a class="nav-link" href="{{url_for('articles.add_article')}}">Add books</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{url_for('articles.show_articles')}}">List of books</a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
-            {% if session.logged_in %}
+            {% if current_user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
+                <a class="nav-link">Logged as: {{current_user.username}}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{url_for('auth.logout')}}">Logout</a>
             </li>
             {% else %}
             <li class="nav-item">
-                <a class="nav-link" href="/login">Log in</a>
-                {% endif %}
+                <a class="nav-link" href="{{url_for('auth.register')}}">Sign up</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{url_for('auth.login')}}">Log in</a>
+            {% endif %}
             </li>
         </ul>
     </div>
