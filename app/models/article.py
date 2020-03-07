@@ -11,6 +11,7 @@ class Article(db.Model):
     title = db.Column(db.String(200), index=True)
     pages = db.Column(db.Integer, index=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    org_filename = db.Column(db.String(256), index=True)
     file_path = db.Column(db.String(256), index=True)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 

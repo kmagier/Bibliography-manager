@@ -16,7 +16,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 login_manager = LoginManager()  
 db.app = app
 
-from views.index.index import index_bp 
+from views.index.index import index_bp  
 from views.auth.auth import auth_bp
 from views.articles.articles import articles_bp
 from models.user import User
