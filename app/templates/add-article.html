@@ -2,23 +2,63 @@
 
 {% block content %}
 <div class="add-article">
-	<form action="{{url_for('articles.add_article')}}" method="post" enctype="multipart/form-data">
+	<form id="article-form" method="post" enctype="multipart/form-data">
 		<h2 class="text-center">Add book</h2>
 		<div class="form-group">
-			<input type="text" class="form-control" name="Author" placeholder="Author" required="required">
+			<input type="text" class="form-control" id="author" name="Author" placeholder="Author" required="required">
 		</div>
 		<div class="form-group">
-			<input type="text" class="form-control" name="Title" placeholder="Title" required="required">
+			<input type="text" class="form-control" id="title" name="Title" placeholder="Title" required="required">
 		</div>
 		<div class="form-group">
-			<input type="number" class="form-control" name="Pages" placeholder="Pages" required="required">
+			<input type="number" class="form-control" id="pages" name="Pages" placeholder="Pages" required="required">
 		</div>
-		<div class="form-group">	
-			<input type="file" name="Article"/>
+		<div class="form-group">
+			<input type="file" id="file-id" name="Article" />
 		</div>
 		<div class="form-group">
 			<button type="submit" class="btn btn-success btn-lg btn-block">Add article</button>
 		</div>
 	</form>
 </div>
+
+<script>
+
+	const BASE_URL = 'https://localhost:8081/add-article'
+
+	document.addEventListener("DOMContentLoaded", function (event) {
+		let articleForm = document.getElementById("article-form");
+		articleForm.addEventListener("submit", function (event) {
+			event.preventDefault();
+			console.log('Działa');
+			var formData = new FormData(articleForm);
+			var fileInput = document.getElementById("file-id");
+			var file = fileInput.files[0];
+			var author = document.getElementById('author').value;
+			var title = document.getElementById('title').value;
+			var pages = document.getElementById('pages').value;
+			formData.append('Author', author);
+			formData.append('Title', title);
+			formData.append('Pages', pages);
+			formData.append('Article', file);
+			for (var value of formData.values()) {
+				console.log(value);
+			}
+			fetch('https://localhost:8081/add-article', {
+				method: 'POST',
+				mode: 'cors',
+				body: formData,
+				credentials: 'include'
+			})
+				.then((response) => response.json())
+				.then((result) => {
+					console.log('Success:', result);
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+				});
+		});
+
+	});
+</script>
 {% endblock %}

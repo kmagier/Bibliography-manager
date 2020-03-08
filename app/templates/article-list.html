@@ -7,6 +7,9 @@
                 <th>AUTHOR</th>
                 <th>TITLE</th>
                 <th>PAGES</th>
+                <th>DOWNLOAD</th>
+                <th>DELETE FILE</th>
+                <th>DELETE BOOK</th>
             </tr>
         </thead>
         <tbody id="result">
@@ -15,7 +18,7 @@
 </div>
 
 <script>
-    const BASE_URL = 'https://localhost:8080/articles'
+    const BASE_URL = 'https://localhost:8081/article-list'
     const DELETE = '/delete/'
 
     document.addEventListener('DOMContentLoaded', function (event) {
@@ -23,8 +26,10 @@
     });
 
     function loadJSON() {
-        fetch('https://localhost:8080/articles', {
-            method: 'get'
+        fetch(BASE_URL, {
+            method: 'get',
+            mode: 'cors',
+            credentials: 'include'
         })
             .then(response => response.json())
             .then(function (data) {
@@ -33,31 +38,26 @@
                     html += `<tr>
                                 <td>${article.author}</td>
                                 <td>${article.title}</td>
-                                <td>${article.pages}</td></tr>`
-                    // html += `<tr>
-                                
-                    //     <td>${article.author}</td>
-                    //     <td>${article.title}</td>
-                    //     <td>${article.pages}</td>`
-                    //     if (book.download_link == "") {
-                    //         html +=`<td>No file</br>
-                                        
-                    //                     <input type="file" id="${book.id}" name="article" onchange="upload_file(this);" style="display:none"/>
-                    //                     <button class="btn btn-success btn-sm" onclick="document.getElementById('${book.id}').click();">Upload</button>
-                                        
-                    //                     </td>`;
-                    //     } else {
-                    //         html +=`
-                    //     <td><a href="${book.download_link}" class="btn btn-primary btn-sm">Download</a></td>`;}
-                    //     html +=`
-                    //     <td>
-                    //     <button onClick="delete_file(this);" data-id="${book.id}" class="delete btn btn-danger btn-sm">Delete file</button>
-                    //     </td>
-                    //     <td>   
-                    //         <button onClick="delete_book(this);"  data-id="${book.id}" class="delete btn btn-danger btn-sm">Delete</button>   
-                    //     </td>
-                    //     </tr>`;
-                    //     console.log(book.download_link)
+                                <td>${article.pages}</td>`
+
+                    if (article.download_link == "") {
+                        html += `<td>No file</br>
+                                <input type="file" id="${article.id}" name="article" onchange="upload_file(this);" style="display:none"/>
+                                <button class="btn btn-success btn-sm" onclick="document.getElementById('${article.id}').click();">Upload</button>
+                                 </td>`;
+                    } else {
+                        html += `
+                    <td><a href="${article.download_link}" class="btn btn-primary btn-sm">Download</a></td>`;
+                    }
+                    html += `
+                    <td>
+                    <button onClick="delete_file(this);" data-id="${article.id}" class="delete btn btn-danger btn-sm">Delete file</button>
+                    </td>
+                    <td>   
+                        <button onClick="delete_book(this);"  data-id="${article.id}" class="delete btn btn-danger btn-sm">Delete</button>   
+                    </td>
+                    </tr>`;
+                    console.log(article.download_link)
                 });
                 document.getElementById('result').innerHTML = html
             }).catch((err) => console.log(err))
@@ -105,7 +105,7 @@
             .catch(err => console.log(err))
     }
 
-    
+
 
 
 

@@ -1,7 +1,10 @@
+from flask import url_for
 from datetime import datetime
 from models.user import User
 from database import db
 from flask_sqlalchemy import inspect
+
+BASE_URL = 'https://localhost:8081'
 
 class Article(db.Model):
     __tablename__ = 'articles'
@@ -11,8 +14,8 @@ class Article(db.Model):
     title = db.Column(db.String(200), index=True)
     pages = db.Column(db.Integer, index=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    org_filename = db.Column(db.String(256), index=True)
     article_hash = db.Column(db.String(80), index=True, unique=True)
+    org_filename = db.Column(db.String(256), index=True)
     file_path = db.Column(db.String(256), index=True)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
@@ -24,4 +27,4 @@ class Article(db.Model):
                 "author": self.author,
                 "title": self.title,
                 "pages": self.pages,
-                "file": self.file_path}
+                "download_link": BASE_URL + url_for('files.download_article', article_name=self.article_hash)}

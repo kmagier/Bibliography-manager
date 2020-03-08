@@ -7,26 +7,29 @@ from database import db
 import psycopg2
 from config import *
 from flask_login import LoginManager
-
-app = Flask(__name__, static_url_path = "")
+app = Flask(__name__, static_url_path = "")  
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 login_manager = LoginManager()  
-db.app = app  
+db.app = app 
 
-from views.index.index import index_bp   
-from views.auth.auth import auth_bp
-from views.articles.articles import articles_bp
+from models.article import Article
 from models.user import User
-from models.article import Article 
+from routes.files import files_bp
 db.init_app(app)
 login_manager.init_app(app)
-db.create_all() 
- 
-app.register_blueprint(index_bp)
-app.register_blueprint(auth_bp)
-app.register_blueprint(articles_bp) 
 
-  
+app.register_blueprint(files_bp)
+
+@login_manager.user_loader
+def load_user(user_id):
+    if user_id is not None:
+        return User.query.get(user_id)
+    else:
+        return None
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return "Unauthorized request"

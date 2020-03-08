@@ -14,22 +14,23 @@ DIR_PATH = 'static/files/'
 @login_required
 def add_article():
     user = current_user
-    if request.method == 'POST':
-        author = request.form.get('Author')
-        title = request.form.get('Title')
-        pages = request.form.get('Pages')
-        pdfile = request.files['Article']
-        if(len(pdfile.filename) > 0):
-            filename_prefix = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-            new_filename = filename_prefix + '.' + pdfile.filename.split('.')[-1]
-            path_to_file = DIR_PATH + new_filename
-            pdfile.save(path_to_file)
-            article = Article(author=author, title=title, pages=pages, file_path=path_to_file, org_filename=pdfile.filename, owner=user)
-            db.session.add(article)
-            db.session.commit()
-            current_app.logger.debug('Uploaded article - Author:{}, Title:{}, Pages{}, File{}'.format(author, title, pages, path_to_file))
-        else:
-            current_app.logger.debug('Failed to upload file') 
+    # if request.method == 'POST':
+    #     author = request.form.get('Author')
+    #     title = request.form.get('Title')
+    #     pages = request.form.get('Pages')
+    #     pdfile = request.files['Article']
+    #     if(len(pdfile.filename) > 0):
+    #         filename_prefix = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    #         new_filename = filename_prefix + '.' + pdfile.filename.split('.')[-1]
+    #         path_to_file = DIR_PATH + new_filename
+    #         pdfile.save(path_to_file)
+    #         article = Article(author=author, title=title, pages=pages, file_path=path_to_file, 
+    #                         org_filename=pdfile.filename, article_hash=new_filename, owner=user)
+    #         db.session.add(article)
+    #         db.session.commit()
+    #         current_app.logger.debug('Uploaded article - Author:{}, Title:{}, Pages{}, File{}'.format(author, title, pages, path_to_file))
+    #     else:
+    #         current_app.logger.debug('Failed to upload file') 
     return render_template("add-article.html")
 
 @articles_bp.route('/article-list', methods=['GET'])
