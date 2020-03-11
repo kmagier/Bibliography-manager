@@ -44,19 +44,19 @@
                         html += `<td>No file</br>
                                 <input type="file" id="${article.id}" name="article" onchange="upload_file(this);" style="display:none"/>
                                 <button class="btn btn-success btn-sm" onclick="document.getElementById('${article.id}').click();">Upload</button>
-                                 </td>`;
+                                 </td>
+                                 <td>No file</td>`;
                     } else {
                         html += `
-                    <td><a href="${article.download_link}" class="btn btn-primary btn-sm">Download</a></td>`;
-                    }
-                    html += `
+                    <td><a href="${article.download_link}" class="btn btn-primary btn-sm">Download</a></td>
                     <td>
                     <button onClick="delete_file(this);" data-id="${article.id}" class="delete btn btn-danger btn-sm">Delete file</button>
-                    </td>
-                    <td>   
+                    </td>`;
+                    }
+                    html += `<td>   
                         <button onClick="delete_book(this);"  data-id="${article.id}" class="delete btn btn-danger btn-sm">Delete</button>   
-                    </td>
-                    </tr>`;
+                            </td>
+                        </tr>`;
                     console.log(article.download_link)
                 });
                 document.getElementById('result').innerHTML = html

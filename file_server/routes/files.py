@@ -4,7 +4,7 @@ from models.user import User
 from database import db
 from flask_login import login_required, logout_user, current_user, login_user
 import bcrypt
-import sys
+import sys, os
 import string, random
 from flask_cors import CORS, cross_origin
 
@@ -68,3 +68,65 @@ def add_article():
     else:
         response = jsonify('Wrong request type.')
     return response
+
+@files_bp.route('/article-list/files/<int:article_id>', methods=['OPTIONS', 'DELETE'])
+@cross_origin(supports_credentials=True, origins=['https://localhost:8080'])
+def delete_article_file(article_id):
+    if request.method == 'DELETE':
+        article=Article.query.filter_by(id=article_id).first()
+        if article is not None:
+            path_to_file = article.file_path
+            os.remove(path_to_file)
+            article.file_path = ""
+            response = jsonify('File removed')
+            current_app.logger.debug("File with id {} deleted from {}".format(article_id, path_to_file))
+            db.session.commit() 
+        else:
+            response = jsonify('File not found')
+    return response
+
+@files_bp.route('/article-list/files/<int:article_id>', methods=['OPTIONS', 'PATCH'])
+@cross_origin(supports_credentials=True, origins=['https://localhost:8080'])
+def upload_article_file(article_id):
+    if request.method == 'PATCH':
+        article=Article.query.filter_by(id=article_id).first()
+        if article is not None:
+            pdfile = request.files['Article']
+            if(len(pdfile.filename) > 0):
+                filename_prefix = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+                new_filename = filename_prefix + '.' + pdfile.filename.split('.')[-1]
+                path_to_file = DIR_PATH + new_filename
+                pdfile.save(path_to_file)   
+                article.article_hash = new_filename
+                article.file_path = path_to_file
+                current_app.logger.debug("Uploaded new file for article id {} with name {} to path {}".format(article_id, new_filename, path_to_file))
+                response = jsonify("File added")
+                db.session.commit()
+            else:
+                response = jsonify("Error: Empty content of file.")
+        else:
+            response = jsonify('Article not found')
+    else:
+        reponse = jsonify('Invalid method')
+    return response
+
+@files_bp.route('/article-list/<int:article_id>', methods=['OPTIONS', 'DELETE'])
+@cross_origin(supports_credentials=True, origins=['https://localhost:8080'])
+def delete_article(article_id):
+    if request.method == 'DELETE':
+        article=Article.query.filter_by(id=article_id).first()
+        if article is not None:
+            if article.file_path is not "":
+                os.remove(article.file_path)
+            db.session.delete(article)
+            current_app.logger.debug("Deleted article from database")
+            response = jsonify('Article deleted')
+            db.session.commit()
+        else:
+            response = jsonify('Article not found')
+    else:
+        reponse = jsonify('Invalid method')
+    return response
+
+            
+

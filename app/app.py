@@ -24,7 +24,7 @@ from models.article import Article
 db.init_app(app)
 login_manager.init_app(app)
 db.create_all() 
- 
+
 app.register_blueprint(index_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(articles_bp) 

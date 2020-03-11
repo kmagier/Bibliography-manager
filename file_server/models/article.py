@@ -27,4 +27,5 @@ class Article(db.Model):
                 "author": self.author,
                 "title": self.title,
                 "pages": self.pages,
-                "download_link": BASE_URL + url_for('files.download_article', article_name=self.article_hash)}
+                "download_link": BASE_URL + url_for('files.download_article', article_name=self.article_hash) if self.file_path is not "" else ""
+                        }

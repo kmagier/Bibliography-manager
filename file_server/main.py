@@ -4,7 +4,7 @@ from flask import (Flask, request, render_template, redirect, url_for,
 import redis
 import os, sys
 from database import db
-import psycopg2
+import psycopg2 
 from config import *
 from flask_login import LoginManager
 app = Flask(__name__, static_url_path = "")  
