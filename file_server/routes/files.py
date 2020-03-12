@@ -19,8 +19,8 @@ def get_articles():
     user = current_user
     articleList = []  
     if user.is_anonymous == False:
-        _articles = user.articles.all()
-        for article in _articles:
+        articles = user.articles.all()
+        for article in articles:
             articleList.append(article.serialize())
         response = jsonify(articleList)
     else:

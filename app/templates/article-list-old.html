@@ -38,26 +38,33 @@
         })
             .then(response => response.json())
             .then(function (data) {
-                dataTable.refresh();
-                let author, title, pages, download_link, delete_file, delete_article;
+                let html = '';
                 data.forEach(function (article) {
-                    author = article.author
-                    title = article.title
-                    pages = article.pages
+                    html += `<tr>
+                                <td>${article.author}</td>
+                                <td>${article.title}</td>
+                                <td>${article.pages}</td>`
+
                     if (article.download_link == "") {
-                        download_link = `No file
-                        <input type="file" id="${article.id}" name="article" onchange="upload_file(this);" style="display:none"/>
-                        <button class="btn btn-success btn-sm" onclick="document.getElementById('${article.id}').click();">Upload</button>`;
-                        delete_file = "No file";
+                        html += `<td>No file</br>
+                                <input type="file" id="${article.id}" name="article" onchange="upload_file(this);" style="display:none"/>
+                                <button class="btn btn-success btn-sm" onclick="document.getElementById('${article.id}').click();">Upload</button>
+                                 </td>
+                                 <td>No file</td>`;
                     } else {
-                        download_link = `<a href="${article.download_link}" class="btn btn-primary btn-sm">Download</a>`;
-                        delete_file = `<button onClick="delete_file(this);" data-id="${article.id}" class="delete btn btn-danger btn-sm">Delete file</button>`;
+                        html += `
+                    <td><a href="${article.download_link}" class="btn btn-primary btn-sm">Download</a></td>
+                    <td>
+                    <button onClick="delete_file(this);" data-id="${article.id}" class="delete btn btn-danger btn-sm">Delete file</button>
+                    </td>`;
                     }
-                    delete_article = `<button onClick="delete_book(this);"  data-id="${article.id}" class="delete btn btn-danger btn-sm">Delete</button>`;
-                    var newRow = [author, title, pages, download_link, delete_file, delete_article];
-                    dataTable.rows().add(newRow);
+                    html += `<td>   
+                        <button onClick="delete_book(this);"  data-id="${article.id}" class="delete btn btn-danger btn-sm">Delete</button>   
+                            </td>
+                        </tr>`;
                     console.log(article.download_link)
-                });   
+                });
+                document.getElementById('result').innerHTML = html
             }).catch((err) => console.log(err))
     }
 
@@ -81,7 +88,7 @@
             credentials: 'include'
         })
             .then(response => response.json())
-            .then(result => location.reload())
+            .then(result => loadJSON())
             .catch(err => console.log(err))
     }
 
@@ -99,7 +106,7 @@
             body: fileData
         })
             .then(response => response.json())
-            .then(data => location.reload())
+            .then(data => loadJSON())
             .catch(err => console.log(err))
     }
 
