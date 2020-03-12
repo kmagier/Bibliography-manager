@@ -1,10 +1,8 @@
-from flask import Blueprint, render_template, request, current_app, jsonify, send_file
+from flask import Blueprint, render_template, request, current_app
 from models.user import User
 from models.article import Article
 from database import db
-import string, random
 from flask_login import login_required, current_user
-import os, sys
 
 articles_bp = Blueprint('articles', __name__, static_folder='static')
 DIR_PATH = 'static/files/'

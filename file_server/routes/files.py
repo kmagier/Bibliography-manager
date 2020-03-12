@@ -1,9 +1,8 @@
-from flask import Flask, Blueprint, render_template, request, current_app, redirect, url_for, jsonify, send_file
+from flask import Blueprint, request, current_app, jsonify, send_file
 from models.article import Article
 from models.user import User
 from database import db
-from flask_login import login_required, logout_user, current_user, login_user
-import bcrypt
+from flask_login import login_required, current_user
 import sys, os
 import string, random
 from flask_cors import CORS, cross_origin

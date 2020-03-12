@@ -10,7 +10,7 @@ services:
         volumes: 
              - ./app:/app
         env_file: 
-            - ./app/api.env
+            - ./app/.env
     file_server:
         container_name: file_server
         build:
@@ -30,10 +30,8 @@ services:
             - postgresql-volume:/var/lib/postgresql/data
         ports:
             - 5432:5432
-        environment: 
-            POSTGRES_USER: 'karol'
-            POSTGRES_PASSWORD: '123456'
-            POSTGRES_DB: 'database'
+        env_file: 
+            - ./app/.env
     redis:
         container_name: redisdb
         image: "redis:alpine"
