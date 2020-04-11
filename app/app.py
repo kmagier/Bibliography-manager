@@ -29,4 +29,4 @@ app.register_blueprint(index_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(articles_bp) 
 
-  
+   

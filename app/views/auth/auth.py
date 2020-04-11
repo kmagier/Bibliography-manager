@@ -1,46 +1,70 @@
-from flask import Blueprint, render_template, request, current_app, redirect, url_for
+from flask import Blueprint, render_template, request, current_app, redirect, url_for, flash
 from models.user import User
 from database import db
 from flask_login import login_required, logout_user, current_user, login_user
 import bcrypt
 from app import login_manager
+from forms.authForms import *
 
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form.get('username') 
-        email = request.form.get('email')
-        password = request.form.get('password')
+    form = RegistrationForm(request.form)
+    if request.method == 'POST' and form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
         existing_user = User.query.filter_by(username=username).first()
         if existing_user is None:
             new_user = User(username=username, email=email)
             new_user.set_password(password)
             db.session.add(new_user)
             db.session.commit()
-            current_app.logger.debug('Created user {} with email {} and password {}'.format(username, email, password))
+            current_app.logger.debug(f'Created user {username} with email {email} and password {password}')
             login_user(new_user)
             return redirect(url_for('index.index'))    
-    return render_template('register.html')
+    return render_template('register.html', form=form)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        user = User.query.filter_by(username=request.form.get('username')).first()
+    form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate_on_submit():
+        user = User.query.filter_by(username=form.login.data).first()
         if user is None or not user.check_password(request.form.get('password')):
             current_app.logger.debug('Wrong username or password.')
         else:
             current_app.logger.debug('Found user {} with password {}'.format(user, request.form.get('password')))
             login_user(user)
             return redirect(url_for('index.index')) 
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 @auth_bp.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('index.index'))
+
+@auth_bp.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    user = current_user
+    current_app.logger.debug(f'Current user password hash is {user.password_hash}')
+    form = PasswordChangeForm(request.form)
+    if request.method == 'POST' and form.validate_on_submit():
+        current_password = form.password.data
+        new_password = form.new_password.data
+        if not user.check_password(form.password.data):
+            current_app.logger.debug(user.check_password(form.password.data))
+            current_app.logger.debug('Wrong password given.')
+            return redirect(request.url)
+        else:
+            user.set_password(new_password)
+            current_app.logger.debug(f'New password is: {new_password} with hash: {user.password_hash}')
+            db.session.commit()
+            return redirect(url_for('index.index'))
+    return render_template('change-password.html', form=form)
+
 
 @login_manager.user_loader
 def load_user(user_id):

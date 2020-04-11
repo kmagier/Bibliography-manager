@@ -2,24 +2,49 @@
 {% block content %}
 
 <div class="signup-form">
-  <form action="{{url_for('auth.register')}}" method="POST">
-    <h2>Sign up</h2>
-    <p>Please fill in this form to create an account.</p>
-    <div class="form-group">
-      <input type="text" class="form-control" name="username" placeholder="Enter Username" required="required">
-    </div>
-    <div class="form-group">
-      <input type="text" class="form-control" name="email" placeholder="Enter E-mail" required="required">
-    </div>
-    <div class="form-group">
-      <input type="password" class="form-control" name="password" placeholder="Enter Password" required="required">
-    </div>
-
-    <div class="form-group">
-      <button type="submit" class="btn btn-success btn-lg btn-block">Sign up</button>
-    </div>
-  </form>
-  <div class="text-center">Already have an account? <a href="{{url_for('auth.login')}}">Log in</a></div>
+    <form action="{{url_for('auth.register')}}" method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.username.label}} <br>
+            {{ form.username(class_="form-control")}}
+            {% for error in form.username.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.email.label}} <br>
+            {{ form.email(class_="form-control")}}
+            {% for error in form.email.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.password.label }} <br>
+            {{ form.password(class_="form-control") }}
+            {% for error in form.password.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.confirm.label }} <br>
+            {{ form.confirm(class_="form-control") }}
+            {% for error in form.confirm.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class_="btn btn-success btn-lg btn-block") }}
+        </div>
+    </form>
+    <div class="text-center">Already have an account? <a href="{{url_for('auth.login')}}">Log in</a></div>
 </div>
 
 {% endblock %}
