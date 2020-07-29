@@ -1,7 +1,6 @@
 from flask import Flask
 from flask import (Flask, request, render_template, redirect, url_for,
     send_file, make_response, session, flash)
-import redis
 import os, sys
 from database import db
 import psycopg2 

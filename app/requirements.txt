@@ -1,8 +1,8 @@
 flask
 flask-sqlalchemy
 psycopg2
-redis
 requests
 bcrypt
 flask-login
 flask-wtf
+email_validator

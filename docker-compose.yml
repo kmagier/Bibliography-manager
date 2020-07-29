@@ -32,9 +32,6 @@ services:
             - 5432:5432
         env_file: 
             - ./app/.env
-    redis:
-        container_name: redisdb
-        image: "redis:alpine"
 volumes:
     postgresql-volume:
         external: true
