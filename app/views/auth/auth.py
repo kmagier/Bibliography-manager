@@ -21,7 +21,6 @@ def register():
             new_user.set_password(password)
             db.session.add(new_user)
             db.session.commit()
-            current_app.logger.debug(f'Created user {username} with email {email} and password {password}')
             login_user(new_user)
             return redirect(url_for('index.index'))    
     return render_template('register.html', form=form)
@@ -32,9 +31,8 @@ def login():
     if request.method == 'POST' and form.validate_on_submit():
         user = User.query.filter_by(username=form.login.data).first()
         if user is None or not user.check_password(request.form.get('password')):
-            current_app.logger.debug('Wrong username or password.')
+            return redirect(request.url)
         else:
-            current_app.logger.debug('Found user {} with password {}'.format(user, request.form.get('password')))
             login_user(user)
             return redirect(url_for('index.index')) 
     return render_template('login.html', form=form)
@@ -49,18 +47,14 @@ def logout():
 @login_required
 def change_password():
     user = current_user
-    current_app.logger.debug(f'Current user password hash is {user.password_hash}')
     form = PasswordChangeForm(request.form)
     if request.method == 'POST' and form.validate_on_submit():
         current_password = form.password.data
         new_password = form.new_password.data
         if not user.check_password(form.password.data):
-            current_app.logger.debug(user.check_password(form.password.data))
-            current_app.logger.debug('Wrong password given.')
             return redirect(request.url)
         else:
             user.set_password(new_password)
-            current_app.logger.debug(f'New password is: {new_password} with hash: {user.password_hash}')
             db.session.commit()
             return redirect(url_for('index.index'))
     return render_template('change-password.html', form=form)

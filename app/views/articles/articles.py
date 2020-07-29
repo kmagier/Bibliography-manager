@@ -19,7 +19,6 @@ def add_article():
 def show_articles():
     user = current_user
     articles = user.articles.all()
-    current_app.logger.debug("Articles: {}".format(articles))
     if not articles:
         hasArticles = False
     else:

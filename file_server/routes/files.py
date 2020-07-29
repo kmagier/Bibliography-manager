@@ -24,7 +24,6 @@ def get_articles():
         response = jsonify(articleList)
     else:
         response = jsonify('No files or user logged out.')
-        current_app.logger.debug('User logged out or not found')
     return response
 
 @files_bp.route('/article-list/files/<string:article_name>', methods=['GET'])
@@ -60,9 +59,7 @@ def add_article():
             db.session.add(article)
             db.session.commit()
             response = jsonify('Success, file received.')
-            current_app.logger.debug('Uploaded article - Author:{}, Title:{}, Pages{}, File{}'.format(author, title, pages, path_to_file))
         else:
-            current_app.logger.debug('Failed to upload file') 
             response = jsonify('Failed to receive file.')
     else:
         response = jsonify('Wrong request type.')
@@ -78,7 +75,6 @@ def delete_article_file(article_id):
             os.remove(path_to_file)
             article.file_path = ""
             response = jsonify('File removed')
-            current_app.logger.debug("File with id {} deleted from {}".format(article_id, path_to_file))
             db.session.commit() 
         else:
             response = jsonify('File not found')
@@ -98,7 +94,6 @@ def upload_article_file(article_id):
                 pdfile.save(path_to_file)   
                 article.article_hash = new_filename
                 article.file_path = path_to_file
-                current_app.logger.debug("Uploaded new file for article id {} with name {} to path {}".format(article_id, new_filename, path_to_file))
                 response = jsonify("File added")
                 db.session.commit()
             else:
@@ -118,7 +113,6 @@ def delete_article(article_id):
             if article.file_path is not "":
                 os.remove(article.file_path)
             db.session.delete(article)
-            current_app.logger.debug("Deleted article from database")
             response = jsonify('Article deleted')
             db.session.commit()
         else:
